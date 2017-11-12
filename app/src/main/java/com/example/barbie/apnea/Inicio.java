@@ -25,7 +25,7 @@ public class Inicio extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id==R.id.menuItemSync) {
-            Intent intent = new Intent(this, ActivityBluetooth.class);
+            Intent intent = new Intent(this, DeviceList.class);
             this.startActivity(intent);
         }
         /*if (id==R.id.opcion2) {
