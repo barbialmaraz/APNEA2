@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -27,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class DeviceList extends AppCompatActivity {
@@ -41,7 +44,9 @@ public class DeviceList extends AppCompatActivity {
     private TextView text_titulo;
     private ProgressBar progressBarCircular;
     private Set<BluetoothDevice> arrayDeDispositivos;
+    private ArrayList listaDeDispVinculados;
     private ArrayList<BluetoothDevice> listaDeDispEncontrados = new ArrayList<BluetoothDevice>();
+    private Map<String, BluetoothDevice> mapNombreADevice = new HashMap<>();
 
 
 
@@ -76,6 +81,7 @@ public class DeviceList extends AppCompatActivity {
 
         progressBarCircular.setVisibility(View.INVISIBLE);
 
+        arrayDeDispositivos = myBluetooth.getBondedDevices();
         mostrarComponentes();
 
         //Se intenta listar los dispositivos conectados, siempre y cuando el bluetooth este encendido...
@@ -93,6 +99,19 @@ public class DeviceList extends AppCompatActivity {
                     bluetoothDesactivado();
 
                 }
+            }
+        });
+
+
+
+      listViewDeDispositivos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                BluetoothDevice item = mapNombreADevice.get(adapterView.getItemAtPosition(i));
+                item.createBond();
+                Inicio.dispositivoVinculado = item;
+
+
             }
         });
 
@@ -130,6 +149,7 @@ public class DeviceList extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
+        arrayDeDispositivos = myBluetooth.getBondedDevices();
         mostrarComponentes();
     }
 
@@ -151,15 +171,17 @@ public class DeviceList extends AppCompatActivity {
 
     private void listarDispositivosvinculados()
     {
-        arrayDeDispositivos = myBluetooth.getBondedDevices();
-        ArrayList list = new ArrayList();
 
+        ArrayList list = new ArrayList();
+        mapNombreADevice.clear();
         if (arrayDeDispositivos.size()>0)
         {
             for(BluetoothDevice bt : arrayDeDispositivos)
             {
                 //if(bt.getName().contains("Philips"))
-                    list.add(bt.getName() + "\n" + bt.getAddress()); //Obtenemos los nombres y direcciones MAC de los disp. vinculados
+                String identificador = bt.getName() + "\n" + bt.getAddress();
+                list.add(identificador); //Obtenemos los nombres y direcciones MAC de los disp. vinculados
+                mapNombreADevice.put(identificador, bt);
             }
         }
         if(list.isEmpty()) {
@@ -231,6 +253,12 @@ public class DeviceList extends AppCompatActivity {
                 Toast.makeText(DeviceList.this,"Dispositivo Encontrado:" + device.getName(),Toast.LENGTH_SHORT);
 
 
+            }else if(BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)){
+                BluetoothDevice dispConectado = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if(dispConectado.getBondState() == BluetoothDevice.BOND_BONDED || dispConectado.getBondState() == BluetoothDevice.BOND_BONDING){
+                    Inicio.dispositivoVinculado = dispConectado;
+                    finish();
+                }
             }
         }
     };

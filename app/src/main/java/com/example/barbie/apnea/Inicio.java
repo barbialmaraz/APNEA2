@@ -7,6 +7,7 @@ import android.support.annotation.MainThread;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,7 @@ public class Inicio extends AppCompatActivity {
     private Button btn_comenzar;
     private Button btn_detener;
     private Button btn_reportes;
-    private static BluetoothDevice dispositivoVinculado;
+    public static BluetoothDevice dispositivoVinculado;
 
 
     @Override
@@ -54,6 +55,7 @@ public class Inicio extends AppCompatActivity {
             }
         });
 
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,6 +63,14 @@ public class Inicio extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(dispositivoVinculado != null) {
+            //Toast.makeText(this,"Conectado a: " + dispositivoVinculado.getName(), Toast.LENGTH_SHORT );
+            Log.d("Inicio", "Conectado a: "+ dispositivoVinculado.getName());
+        }
+    }
 
     //Se hizo click en alguna de las opciones del menu... dependiendo de cual, se va a proceder
     //con su respectiva accion...
