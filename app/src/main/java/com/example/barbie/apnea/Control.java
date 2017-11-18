@@ -45,9 +45,9 @@ public class Control extends ActionBarActivity
 
         setContentView(R.layout.activity_control);
 
-        btnOn = (Button)findViewById(R.id.button2);
-        btnOff = (Button)findViewById(R.id.button3);
-        btnDis = (Button)findViewById(R.id.button4);
+        btnOn = (Button)findViewById(R.id.btn_comenzar);
+        btnOff = (Button)findViewById(R.id.btn_detener);
+        btnDis = (Button)findViewById(R.id.btn_reportes);
         brightness = (SeekBar)findViewById(R.id.seekBar);
         lumn = (TextView)findViewById(R.id.lumn);
 
@@ -162,7 +162,7 @@ public class Control extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_led_control, menu);
+        getMenuInflater().inflate(R.menu.menu_control, menu);
         return true;
     }
 
